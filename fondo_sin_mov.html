@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to my CV!</title>
+    <style>
+        body, html {
+            margin: 0; padding: 0; overflow: hidden;
+            background-color: #1a1a1a;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; font-family: 'Segoe UI', sans-serif;
+        }
+
+        #escenario {
+            width: 80vw; height: 80vh;
+            background-color: #34495e;
+            border: 4px solid #ecf0f1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* CAPAS DE DIÁLOGO (Bienvenida e Info) */
+        .capa-interfaz {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 100;
+            transition: opacity 0.5s;
+        }
+
+        .cuadro-texto {
+            background: #2c3e50;
+            border: 2px solid #3498db;
+            padding: 30px;
+            max-width: 80%;
+            color: white;
+            text-align: center;
+            border-radius: 15px;
+        }
+
+        /* IMÁGENES CLICABLES */
+        .contenedor-imagen {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+        }
+
+        .imagen-clicable {
+            cursor: pointer;
+            transition: transform 0.3s, border-color 0.3s;
+            border: 4px solid transparent;
+            border-radius: 12px;
+            overflow: hidden;
+            width: 180px;
+        }
+
+        .imagen-clicable:hover {
+            transform: scale(1.05);
+            border-color: #3498db;
+        }
+
+        .imagen-clicable img {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .imagen-clicable span {
+            display: block;
+            padding: 10px;
+            background: #3498db;
+            font-weight: bold;
+        }
+
+        /* SPRITE */
+        #sprite {
+            width: 4vw; height: 4vw;
+            background-color: #ff3e00;
+            border-radius: 20%;
+            position: absolute;
+            z-index: 10;
+            display: none;
+        }
+
+        .tecla-e {
+            display: block;
+            margin-top: 20px;
+            color: #f1c40f;
+            font-weight: bold;
+            animation: parpadeo 1s infinite;
+        }
+
+        @keyframes parpadeo { 50% { opacity: 0.2; } }
+
+        .oculto { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div id="escenario">
+        <div id="pantalla-bienvenida" class="capa-interfaz">
+            <div class="cuadro-texto">
+                <h1>Selecciona tu idioma / Select your language</h1>
+                <div class="contenedor-imagen">
+                    <div class="imagen-clicable" onclick="mostrarInstruc('es')">
+                        <img src="images/spain.jpg" alt="Español"/>
+                    </div>
+                    <div class="imagen-clicable" onclick="mostrarInstruc('en')">
+                        <img src="images/eng.png" alt="English"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="pantalla-info" class="capa-interfaz oculto">
+            <div class="cuadro-texto">
+                <h2 id="info-titulo">Título</h2>
+                <p id="info-descripcion">Descripción detallada aquí...</p>
+                <!--<span class="tecla-e" id="info-tecla">Presiona [ E ] para entrar al mundo</span>-->
+            </div>
+        </div>
+
+        <div id="sprite"></div>
+    </div>
+
+    <script>
+        const bienvenida = document.getElementById('pantalla-bienvenida');
+        const info = document.getElementById('pantalla-info');
+        const sprite = document.getElementById('sprite');
+        const escenario = document.getElementById('escenario');
+
+        let estadoActual = 'bienvenida'; // bienvenida, info, juego
+        let posX, posY;
+        const velocidad = 8;
+        const teclas = {};
+
+        // Función para cambiar de Bienvenida a Info
+        function mostrarInstruc(idioma) {
+            estadoActual = 'info';
+            bienvenida.classList.add('oculto');
+            info.classList.remove('oculto');
+
+            const titulo = document.getElementById('info-titulo');
+            const desc = document.getElementById('info-descripcion');
+
+            if(idioma === 'es') {
+                titulo.innerText = "Bienvenido a mi CV Interactivo";
+                desc.innerText = "Usa las [ flechas ] del teclado para moverte por el entorno y la tecla [ E ] para interactura con los elementos.";
+            } else {
+                titulo.innerText = "Welcome to my Interactive CV";
+                desc.innerText = "Use the [ arrow ] keys to move around and the [ E ] key to interact with elements.";
+            }
+        }
+
+        // Manejo de teclado
+        window.addEventListener('keydown', (e) => {
+            const key = e.key.toLowerCase();
+
+            // Si estamos en Info y pulsamos E, iniciamos juego
+            if (key === 'e' && estadoActual === 'info') {
+                iniciarJuego();
+            }
+            teclas[e.key] = true;
+        });
+
+        window.addEventListener('keyup', (e) => teclas[e.key] = false);
+
+        function iniciarJuego() {
+            estadoActual = 'juego';
+            info.classList.add('oculto');
+            sprite.style.display = 'block';
+            
+            posX = (escenario.clientWidth / 2) - (sprite.offsetWidth / 2);
+            posY = (escenario.clientHeight / 2) - (sprite.offsetHeight / 2);
+            
+            bucle();
+        }
+
+        function bucle() {
+            if (estadoActual !== 'juego') return;
+
+            const limiteDerecho = escenario.clientWidth - sprite.offsetWidth;
+            const limiteInferior = escenario.clientHeight - sprite.offsetHeight;
+
+            if (teclas['ArrowUp'] && posY > 0) posY -= velocidad;
+            if (teclas['ArrowDown'] && posY < limiteInferior) posY += velocidad;
+            if (teclas['ArrowLeft'] && posX > 0) posX -= velocidad;
+            if (teclas['ArrowRight'] && posX < limiteDerecho) posX += velocidad;
+
+            sprite.style.left = posX + 'px';
+            sprite.style.top = posY + 'px';
+
+            requestAnimationFrame(bucle);
+        }
+    </script>
+</body>
+</html>
