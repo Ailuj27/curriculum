@@ -12,35 +12,27 @@
         }
 
         #escenario {
-            width: 80vw; height: 80vh;
+            width: 90vw; height: 80vh;
             background-color: #34495e;
             border: 4px solid #ecf0f1;
             position: relative;
             overflow: hidden;
         }
 
-        /* CAPAS DE DIÁLOGO (Bienvenida e Info) */
         .capa-interfaz {
-            position: absolute;
-            top: 0; left: 0;
+            position: absolute; top: 0; left: 0;
             width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.9);
             display: flex; justify-content: center; align-items: center;
             z-index: 100;
-            transition: opacity 0.5s;
         }
 
         .cuadro-texto {
-            background: #2c3e50;
-            border: 2px solid #3498db;
-            padding: 30px;
-            max-width: 80%;
-            color: white;
-            text-align: center;
-            border-radius: 15px;
+            background: #2c3e50; border: 2px solid #3498db;
+            padding: 30px; max-width: 80%; color: white;
+            text-align: center; border-radius: 15px;
         }
 
-        /* IMÁGENES CLICABLES */
         .contenedor-imagen {
             display: flex;
             justify-content: center;
@@ -55,143 +47,300 @@
             border-radius: 12px;
             overflow: hidden;
             width: 180px;
+            height: 140px;
         }
 
-        .imagen-clicable:hover {
-            transform: scale(1.05);
-            border-color: #3498db;
-        }
+        .imagen-clicable:hover { transform: scale(1.05); border-color: #3498db; }
+        .imagen-clicable img { width: 100%; height: 100%; display: block; }
 
-        .imagen-clicable img {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-
-        .imagen-clicable span {
-            display: block;
-            padding: 10px;
-            background: #3498db;
-            font-weight: bold;
-        }
-
-        /* SPRITE */
         #sprite {
-            width: 4vw; height: 4vw;
-            background-color: #ff3e00;
-            border-radius: 20%;
+            width: 100px; 
+            height: 100px;
+            background-image: url('images/gato_sin_fondo_ni_palos.png');
+            background-repeat: no-repeat;
             position: absolute;
-            z-index: 10;
-            display: none;
+            background-size: 400% 400%;
         }
 
-        .tecla-e {
-            display: block;
-            margin-top: 20px;
-            color: #f1c40f;
-            font-weight: bold;
-            animation: parpadeo 1s infinite;
+        #info-personal {
+            width: 80px; height: 80px;
+            background-color: #3498db;
+            border-radius: 50%;
+            position: absolute; top: 20%; right: 20%;
+            z-index: 5; display: none;
+            justify-content: center; align-items: center;
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.7);
         }
 
-        @keyframes parpadeo { 50% { opacity: 0.2; } }
+        .etiqueta {
+            position: absolute; top: -45px;
+            background: white; color: black;
+            padding: 5px 10px; border-radius: 5px;
+            font-weight: bold; font-size: 14px;
+            white-space: nowrap; opacity: 0;
+            transition: opacity 0.3s; pointer-events: none;
+            z-index: 20;
+        }
 
+        .icono-linkd {
+           width: 3vw;
+            height: 3vw;
+        }
+
+        .icono-personal {
+           width: 4vw;
+            height: 4vw;
+        }
+
+        .cerca .etiqueta { opacity: 1;}
         .oculto { display: none !important; }
     </style>
 </head>
 <body>
 
     <div id="escenario">
+        <!-- DIÁLOGO 1: Selección de idioma -->
         <div id="pantalla-bienvenida" class="capa-interfaz">
             <div class="cuadro-texto">
-                <h1>Selecciona tu idioma / Select your language</h1>
+                <h1>Selecciona tu idioma / Select language</h1>
                 <div class="contenedor-imagen">
                     <div class="imagen-clicable" onclick="mostrarInstruc('es')">
                         <img src="images/spain.jpg" alt="Español"/>
-                    </div>
+                        <p>Español</p> </div>
                     <div class="imagen-clicable" onclick="mostrarInstruc('en')">
                         <img src="images/eng.png" alt="English"/>
+                        <p>English</p>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- DIÁLOGO 2: Información de controles -->
         <div id="pantalla-info" class="capa-interfaz oculto">
             <div class="cuadro-texto">
-                <h2 id="info-titulo">Título</h2>
-                <p id="info-descripcion">Descripción detallada aquí...</p>
-                <!--<span class="tecla-e" id="info-tecla">Presiona [ E ] para entrar al mundo</span>-->
+                <h1 id="info-titulo">Título</h1>
+                <p id="info-descripcion" style="font-size: 20px;">Descripción...</p>
+                <p id="info-press" style="color: #f1c40f; font-weight: bold;">[ Presiona E para empezar ]</p>
             </div>
         </div>
 
+         <!-- Pantalla de descripción de objetos -->
+        <div id="pantalla-detalle" class="capa-interfaz oculto">
+            <div class="cuadro-texto">
+                <h1 id="detalle-titulo">Información</h1>
+                <p id="detalle-texto">Aquí va tu info personal...</p>
+                <a href="https://www.linkedin.com/in/julia-ballati-martínez-661287347?utm_source=share_via&utm_content=profile&utm_medium=member_android"><img src="images/linkedin.png" alt="LinkeIn" class="icono-linkd"></a>
+            </div>
+        </div>
+
+        <!-- Objetos del mapa -->
+
+        <div id="info-personal">
+            <img src="images/info.png" class="icono-personal">
+            <div id="etiqueta_pers" class="etiqueta">Información Personal (E)</div>
+        </div>
+        
         <div id="sprite"></div>
     </div>
 
     <script>
         const bienvenida = document.getElementById('pantalla-bienvenida');
         const info = document.getElementById('pantalla-info');
+        const detalle = document.getElementById('pantalla-detalle');
         const sprite = document.getElementById('sprite');
+        const info_pers = document.getElementById('info-personal');
         const escenario = document.getElementById('escenario');
 
-        let estadoActual = 'bienvenida'; // bienvenida, info, juego
+        let estadoActual = 'bienvenida'; 
         let posX, posY;
         const velocidad = 8;
         const teclas = {};
+        const radioDeteccion = 150;
+        let estaCerca = false;
+        let lenguaje = 'es';
+        
+        // Variables de los frames del sprite
+        let frameX = 0;
+        let frameY = 0;
+        let contadorFrames = 0;
 
-        // Función para cambiar de Bienvenida a Info
+        const totalFrames = 4;
+        const velocidadAnimacion = 10;
+
         function mostrarInstruc(idioma) {
             estadoActual = 'info';
+            lenguaje = idioma;
             bienvenida.classList.add('oculto');
             info.classList.remove('oculto');
 
             const titulo = document.getElementById('info-titulo');
             const desc = document.getElementById('info-descripcion');
-
+            const press = document.getElementById('info-press');
+            
             if(idioma === 'es') {
                 titulo.innerText = "Bienvenido a mi CV Interactivo";
-                desc.innerText = "Usa las [ flechas ] del teclado para moverte por el entorno y la tecla [ E ] para interactura con los elementos.";
+                desc.innerText = "Usa las flechas o WASD para moverte y [ E ] para interactuar.";
+                press.innerText = "[ Presiona E para empezar ]";
             } else {
                 titulo.innerText = "Welcome to my Interactive CV";
-                desc.innerText = "Use the [ arrow ] keys to move around and the [ E ] key to interact with elements.";
+                desc.innerText = "Use arrows or WASD to move and [ E ] to interact.";
+                press.innerText = "[ Press E to start ]";
             }
         }
 
-        // Manejo de teclado
+        function mostrarInfo() {
+            estadoActual = 'leyendo';
+            detalle.classList.remove('oculto');
+            
+            // Actualizar el texto del detalle según el idioma
+            const dTitulo = document.getElementById('detalle-titulo');
+            const dTexto = document.getElementById('detalle-texto');
+            if(lenguaje === 'es') {
+                dTitulo.innerText = "Datos de Contacto";
+                dTexto.innerText = "Email: ejemplo@correo.com";
+            } else {
+                dTitulo.innerText = "Contact Details";
+                dTexto.innerText = "Email: example@mail.com";
+            }
+        }
+
+        function cerrarInfo() {
+            estadoActual = 'juego';
+            detalle.classList.add('oculto');
+        }
+
         window.addEventListener('keydown', (e) => {
             const key = e.key.toLowerCase();
-
-            // Si estamos en Info y pulsamos E, iniciamos juego
-            if (key === 'e' && estadoActual === 'info') {
-                iniciarJuego();
+            if (key === 'e') {
+                if (estadoActual === 'info') iniciarJuego();
+                else if (estadoActual === 'juego' && estaCerca) mostrarInfo();
+                else if (estadoActual === 'leyendo') cerrarInfo(); // Cerrar también con E
             }
-            teclas[e.key] = true;
+            teclas[key] = true;
         });
 
-        window.addEventListener('keyup', (e) => teclas[e.key] = false);
+        window.addEventListener('keyup', (e) => teclas[e.key.toLowerCase()] = false);
 
         function iniciarJuego() {
             estadoActual = 'juego';
             info.classList.add('oculto');
             sprite.style.display = 'block';
+            info_pers.style.display = 'flex';
+            const etiqueta_pers = document.getElementById('etiqueta_pers');
+            if (lenguaje === 'es'){
+                etiqueta_pers.innerText = "Información personal [ E ]"
+            }else{
+                etiqueta_pers.innerText = "Personal Information [ E ]"
+            }
+
             
-            posX = (escenario.clientWidth / 2) - (sprite.offsetWidth / 2);
-            posY = (escenario.clientHeight / 2) - (sprite.offsetHeight / 2);
+            posX = (escenario.clientWidth / 2) - 25;
+            posY = (escenario.clientHeight / 2) - 25;
             
             bucle();
         }
 
+        function hayColision(objA, objB) {
+            return (
+                objA.x < objB.x + objB.w &&
+                objA.x + objA.w > objB.x &&
+                objA.y < objB.y + objB.h &&
+                objA.y + objA.h > objB.y
+            );
+        }
+
+        function obtenerRect(elemento, xOpcional, yOpcional) {
+            return {
+                x: xOpcional ?? elemento.offsetLeft,
+                y: yOpcional ?? elemento.offsetTop,
+                w: elemento.offsetWidth,
+                h: elemento.offsetHeight
+            };
+        }
+
+        function verificarColision(nuevaX, nuevaY) {
+            const objX = info_pers.offsetLeft;
+            const objY = info_pers.offsetTop;
+            const objW = info_pers.offsetWidth;
+            const objH = info_pers.offsetHeight;
+            const sprW = sprite.offsetWidth;
+            const sprH = sprite.offsetHeight;
+
+            return (
+                nuevaX < objX + objW &&
+                nuevaX + sprW > objX &&
+                nuevaY < objY + objH &&
+                nuevaY + sprH > objY
+            );
+        }
+
         function bucle() {
-            if (estadoActual !== 'juego') return;
+            if (estadoActual !== 'juego') {
+                requestAnimationFrame(bucle);
+                return;
+            }
 
-            const limiteDerecho = escenario.clientWidth - sprite.offsetWidth;
-            const limiteInferior = escenario.clientHeight - sprite.offsetHeight;
+            let proximaX = posX;
+            let proximaY = posY;
+            let moviendo = false;
 
-            if (teclas['ArrowUp'] && posY > 0) posY -= velocidad;
-            if (teclas['ArrowDown'] && posY < limiteInferior) posY += velocidad;
-            if (teclas['ArrowLeft'] && posX > 0) posX -= velocidad;
-            if (teclas['ArrowRight'] && posX < limiteDerecho) posX += velocidad;
+            /* Orgnización de los sprites
+            Fila 0 → abajo
+            Fila 1 → izquierda
+            Fila 2 → derecha
+            Fila 3 → arriba*/
+
+            // Movimiento + dirección
+            if ((teclas['arrowup'] || teclas['w']) && posY > 0) {
+                proximaY -= velocidad;
+                frameY = 3; // arriba
+                moviendo = true;
+            }
+            if ((teclas['arrowdown'] || teclas['s']) && posY < escenario.clientHeight - sprite.offsetHeight) {
+                proximaY += velocidad;
+                frameY = 0; // abajo
+                moviendo = true;
+            }
+            if ((teclas['arrowleft'] || teclas['a']) && posX > 0) {
+                proximaX -= velocidad;
+                frameY = 1; // izquierda
+                moviendo = true;
+            }
+            if ((teclas['arrowright'] || teclas['d']) && posX < escenario.clientWidth - sprite.offsetWidth) {
+                proximaX += velocidad;
+                frameY = 2; // derecha
+                moviendo = true;
+            }
+
+            // Animación
+            if (moviendo) {
+                contadorFrames++;
+                if (contadorFrames % velocidadAnimacion === 0) {
+                    frameX = (frameX + 1) % totalFrames;
+                }
+            } else {
+                frameX = 0; // idle
+            }
+
+            // Colisiones por eje para deslizamiento
+            if (!verificarColision(proximaX, posY)) posX = proximaX;
+            if (!verificarColision(posX, proximaY)) posY = proximaY;
 
             sprite.style.left = posX + 'px';
             sprite.style.top = posY + 'px';
+            sprite.style.backgroundPosition =`-${frameX * sprite.offsetWidth}px -${frameY * sprite.offsetHeight}px`;
+
+            // Proximidad (usando centros reales)
+            const spriteCX = posX + (sprite.offsetWidth / 2);
+            const spriteCY = posY + (sprite.offsetHeight / 2);
+            const objetoCX = info_pers.offsetLeft + (info_pers.offsetWidth / 2);
+            const objetoCY = info_pers.offsetTop + (info_pers.offsetHeight / 2);
+
+            const dist = Math.hypot(spriteCX - objetoCX, spriteCY - objetoCY);
+            
+            estaCerca = dist < radioDeteccion;
+            if(estaCerca) info_pers.classList.add('cerca');
+            else info_pers.classList.remove('cerca');
 
             requestAnimationFrame(bucle);
         }
