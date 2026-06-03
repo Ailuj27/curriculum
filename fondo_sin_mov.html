@@ -54,12 +54,13 @@
         .imagen-clicable img { width: 100%; height: 100%; display: block; }
 
         #sprite {
-            width: 100px; 
-            height: 100px;
-            background-image: url('images/gato_sin_fondo_ni_palos.png');
+            width: 64px;
+            height: 64px;
+            background-image: url('images/character-spritesheet.png');
             background-repeat: no-repeat;
             position: absolute;
-            background-size: 400% 400%;
+            image-rendering: pixelated;
+            transform: scale(1.2);
         }
 
         #info-personal {
@@ -161,11 +162,11 @@
         
         // Variables de los frames del sprite
         let frameX = 0;
-        let frameY = 0;
+        let frameY = 10;
         let contadorFrames = 0;
 
-        const totalFrames = 4;
-        const velocidadAnimacion = 10;
+        const totalFrames = 9;
+        const velocidadAnimacion = 8;
 
         function mostrarInstruc(idioma) {
             estadoActual = 'info';
@@ -293,22 +294,22 @@
             // Movimiento + dirección
             if ((teclas['arrowup'] || teclas['w']) && posY > 0) {
                 proximaY -= velocidad;
-                frameY = 3; // arriba
+                frameY = 8; // arriba
                 moviendo = true;
             }
             if ((teclas['arrowdown'] || teclas['s']) && posY < escenario.clientHeight - sprite.offsetHeight) {
                 proximaY += velocidad;
-                frameY = 0; // abajo
+                frameY = 10; // abajo
                 moviendo = true;
             }
             if ((teclas['arrowleft'] || teclas['a']) && posX > 0) {
                 proximaX -= velocidad;
-                frameY = 1; // izquierda
+                frameY = 9; // izquierda
                 moviendo = true;
             }
             if ((teclas['arrowright'] || teclas['d']) && posX < escenario.clientWidth - sprite.offsetWidth) {
                 proximaX += velocidad;
-                frameY = 2; // derecha
+                frameY = 11; // derecha
                 moviendo = true;
             }
 
