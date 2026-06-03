@@ -85,12 +85,12 @@
 
         .icono-linkd {
            width: 3vw;
-            height: 3vw;
+           height: 3vw;
         }
 
         .icono-personal {
            width: 4vw;
-            height: 4vw;
+           height: 4vw;
         }
 
         .cerca .etiqueta { opacity: 1;}
@@ -131,6 +131,8 @@
                 <h1 id="detalle-titulo">Información</h1>
                 <p id="detalle-texto">Aquí va tu info personal...</p>
                 <a href="https://www.linkedin.com/in/julia-ballati-martínez-661287347?utm_source=share_via&utm_content=profile&utm_medium=member_android"><img src="images/linkedin.png" alt="LinkeIn" class="icono-linkd"></a>
+                <a href="https://github.com/Ailuj27"><img src="images/github.png" alt="GitHub" class="icono-linkd"></a>
+                <p id="detalle-control" style="color: #f1c40f; font-weight: bold;">Instrucciones de uso</p>
             </div>
         </div>
 
@@ -196,12 +198,15 @@
             // Actualizar el texto del detalle según el idioma
             const dTitulo = document.getElementById('detalle-titulo');
             const dTexto = document.getElementById('detalle-texto');
+            const dControl = document.getElementById('detalle-control');
             if(lenguaje === 'es') {
                 dTitulo.innerText = "Datos de Contacto";
-                dTexto.innerText = "Email: ejemplo@correo.com";
+                dTexto.innerHTML = "<b>Email:</b> juliabm2710@gmail.com <br><b>Tlf:</b> +34 601 40 92 74";
+                dControl.innerText = "Presiona [ E ] para cerrar";
             } else {
                 dTitulo.innerText = "Contact Details";
-                dTexto.innerText = "Email: example@mail.com";
+                dTexto.innerHTML = "<b>Email:</b> juliabm2710@gmail.com <br><b>Tel:</b> +34 601 40 92 74";
+                dControl.innerText = "Press [ E ] to close";
             }
         }
 
