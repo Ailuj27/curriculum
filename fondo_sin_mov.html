@@ -73,6 +73,15 @@
             box-shadow: 0 0 15px rgba(52, 152, 219, 0.7);
         }
 
+        #info-general {
+            width: 80px; height: 80px;
+            background-color: #3498db;
+            border-radius: 50%;
+            position: absolute; bottom: 20%; left: 20%;
+            z-index: 5; display: none;
+            justify-content: center; align-items: center;
+        }
+
         .etiqueta {
             position: absolute; top: -45px;
             background: white; color: black;
@@ -89,6 +98,11 @@
         }
 
         .icono-personal {
+           width: 4vw;
+           height: 4vw;
+        }
+
+        .icono-general {
            width: 4vw;
            height: 4vw;
         }
@@ -136,11 +150,25 @@
             </div>
         </div>
 
+        <!-- Pantalla de descripción de objetos -->
+        <div id="pantalla-general" class="capa-interfaz oculto">
+            <div class="cuadro-texto">
+                <h1 id="general-titulo">Titulo</h1>
+                <p id="general-texto">Aquí va tu info personal...</p>
+                <p id="general-control" style="color: #f1c40f; font-weight: bold;">Instrucciones de uso</p>
+            </div>
+        </div>
+
         <!-- Objetos del mapa -->
 
         <div id="info-personal">
             <img src="images/info.png" class="icono-personal">
             <div id="etiqueta_pers" class="etiqueta">Información Personal (E)</div>
+        </div>
+
+        <div id="info-general">
+            <img src="images/manuscrito.png" class="icono-general">
+            <div id="etiqueta_general" class="etiqueta">Información general</div>
         </div>
         
         <div id="sprite"></div>
@@ -150,8 +178,10 @@
         const bienvenida = document.getElementById('pantalla-bienvenida');
         const info = document.getElementById('pantalla-info');
         const detalle = document.getElementById('pantalla-detalle');
+        const genreal = document.getElementById('pantalla-general');
         const sprite = document.getElementById('sprite');
         const info_pers = document.getElementById('info-personal');
+        const info_general = document.getElementById('info-general');
         const escenario = document.getElementById('escenario');
 
         let estadoActual = 'bienvenida'; 
@@ -166,6 +196,13 @@
         let frameX = 0;
         let frameY = 10;
         let contadorFrames = 0;
+
+        // poner aqui los bjetos interactivos
+        const objetosInteractivos = [
+            { elemento: info_pers, accion: mostrarInfo },
+            { elemento: info_general, accion: mostrarInfoGeneral }
+        ];
+        let objetoCercano = null;
 
         const totalFrames = 9;
         const velocidadAnimacion = 5;
@@ -210,6 +247,25 @@
             }
         }
 
+        function mostrarInfoGeneral() {
+            estadoActual = 'leyendo';
+            genreal.classList.remove('oculto');
+            
+            // Actualizar el texto del detalle según el idioma
+            const dTitulo = document.getElementById('general-titulo');
+            const dTexto = document.getElementById('general-texto');
+            const dControl = document.getElementById('general-control');
+            if(lenguaje === 'es') {
+                dTitulo.innerText = "Estudios";
+                dTexto.innerHTML = "<b>Grado Bilingüe en Ingeniería Informática</b> <br> Universidad de Castilla La-Mancha <br> <b>Máster Universitario en Inteligencia Artificial </b> <br> Universidad de Castilla La-Mancha";
+                dControl.innerText = "Presiona [ E ] para cerrar";
+            } else {
+                dTitulo.innerText = "Studies";
+                dTexto.innerHTML = "<b>Bilingual Bachelor's Degree in Computer Engineering</b> <br> University of Castilla–La Mancha <br> <b>University Master’s Degree in Artificial Intelligence </b> <br> University of Castilla–La Mancha";
+                dControl.innerText = "Press [ E ] to close";
+            }
+        }
+
         function cerrarInfo() {
             estadoActual = 'juego';
             detalle.classList.add('oculto');
@@ -219,7 +275,7 @@
             const key = e.key.toLowerCase();
             if (key === 'e') {
                 if (estadoActual === 'info') iniciarJuego();
-                else if (estadoActual === 'juego' && estaCerca) mostrarInfo();
+                else if (estadoActual === 'juego' && objetoCercano) objetoCercano.accion();
                 else if (estadoActual === 'leyendo') cerrarInfo(); // Cerrar también con E
             }
             teclas[key] = true;
@@ -232,11 +288,16 @@
             info.classList.add('oculto');
             sprite.style.display = 'block';
             info_pers.style.display = 'flex';
+            info_general.style.display = 'flex';
             const etiqueta_pers = document.getElementById('etiqueta_pers');
+            const etiqueta_general = document.getElementById('etiqueta_general');
+
             if (lenguaje === 'es'){
                 etiqueta_pers.innerText = "Información personal [ E ]"
+                etiqueta_general.innerText = "Información general [ E ]"
             }else{
                 etiqueta_pers.innerText = "Personal Information [ E ]"
+                etiqueta_general.innerText = "General Information [ E ]"
             }
 
             
@@ -244,6 +305,16 @@
             posY = (escenario.clientHeight / 2) - 25;
             
             bucle();
+        }
+
+        // COLISIONES
+        function obtenerRect(elemento, xOpcional, yOpcional) {
+            return {
+                x: xOpcional ?? elemento.offsetLeft,
+                y: yOpcional ?? elemento.offsetTop,
+                w: elemento.offsetWidth,
+                h: elemento.offsetHeight
+            };
         }
 
         function hayColision(objA, objB) {
@@ -255,31 +326,16 @@
             );
         }
 
-        function obtenerRect(elemento, xOpcional, yOpcional) {
-            return {
-                x: xOpcional ?? elemento.offsetLeft,
-                y: yOpcional ?? elemento.offsetTop,
-                w: elemento.offsetWidth,
-                h: elemento.offsetHeight
-            };
-        }
-
         function verificarColision(nuevaX, nuevaY) {
-            const objX = info_pers.offsetLeft;
-            const objY = info_pers.offsetTop;
-            const objW = info_pers.offsetWidth;
-            const objH = info_pers.offsetHeight;
-            const sprW = sprite.offsetWidth;
-            const sprH = sprite.offsetHeight;
+            const spriteRect = obtenerRect(sprite, nuevaX, nuevaY);
 
-            return (
-                nuevaX < objX + objW &&
-                nuevaX + sprW > objX &&
-                nuevaY < objY + objH &&
-                nuevaY + sprH > objY
-            );
+            return objetosInteractivos.some(obj => {
+                const objRect = obtenerRect(obj.elemento);
+                return hayColision(spriteRect, objRect);
+            });
         }
 
+        // BUCLE DE ANIMACIÓN
         function bucle() {
             if (estadoActual !== 'juego') {
                 requestAnimationFrame(bucle);
@@ -337,16 +393,28 @@
             sprite.style.backgroundPosition =`-${frameX * sprite.offsetWidth}px -${frameY * sprite.offsetHeight}px`;
 
             // Proximidad (usando centros reales)
-            const spriteCX = posX + (sprite.offsetWidth / 2);
-            const spriteCY = posY + (sprite.offsetHeight / 2);
-            const objetoCX = info_pers.offsetLeft + (info_pers.offsetWidth / 2);
-            const objetoCY = info_pers.offsetTop + (info_pers.offsetHeight / 2);
+            objetoCercano = null;
 
-            const dist = Math.hypot(spriteCX - objetoCX, spriteCY - objetoCY);
-            
-            estaCerca = dist < radioDeteccion;
-            if(estaCerca) info_pers.classList.add('cerca');
-            else info_pers.classList.remove('cerca');
+            objetosInteractivos.forEach(obj => {
+                const elemento = obj.elemento;
+
+                const spriteCX = posX + sprite.offsetWidth / 2;
+                const spriteCY = posY + sprite.offsetHeight / 2;
+
+                const objetoCX = elemento.offsetLeft + elemento.offsetWidth / 2;
+                const objetoCY = elemento.offsetTop + elemento.offsetHeight / 2;
+
+                const dist = Math.hypot(spriteCX - objetoCX, spriteCY - objetoCY);
+
+                if (dist < radioDeteccion) {
+                    elemento.classList.add('cerca');
+                    objetoCercano = obj;
+                } else {
+                    elemento.classList.remove('cerca');
+                }
+            });
+
+            estaCerca = objetoCercano !== null;
 
             requestAnimationFrame(bucle);
         }
