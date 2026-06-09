@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <title>Welcome to my CV!</title>
     <style>
@@ -28,9 +29,55 @@
         }
 
         .cuadro-texto {
+            font-family: 'Press Start 2P';
             background: #2c3e50; border: 2px solid #3498db;
-            padding: 30px; max-width: 80%; color: white;
+            padding: 30px; max-width: 90%; color: white;
             text-align: center; border-radius: 15px;
+        }
+
+        .cuadro-fijo {
+            font-family: 'Press Start 2P';
+            background: #2c3e50;
+            border: 4px solid #3498db;
+            box-shadow:
+                0 0 15px rgba(52,152,219,.5),
+                inset 0 0 15px rgba(52,152,219,.15);
+
+            position: relative;
+
+            padding: 30px;
+            color: white;
+            text-align: center;
+            border-radius: 15px;
+
+            width: 50vw;
+            height: 40vh;
+        }
+
+        .separador {
+            width: 300px;
+            height: 6px;
+
+            background: linear-gradient(
+                to right,
+                transparent,
+                #3498db,
+                transparent
+            );
+
+            margin: 25px auto;
+            border-radius: 50px;
+        }
+
+        .barra-inferior {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 20px;
+
+            text-align: center;
+            color: #f1c40f;
+            font-size: 1.3rem;
         }
 
         .contenedor-imagen {
@@ -67,8 +114,7 @@
             width: 80px; height: 80px;
             background-color: #3498db;
             border-radius: 50%;
-            position: absolute; top: 20%; right: 20%;
-            z-index: 5; display: none;
+            z-index: 5;
             justify-content: center; align-items: center;
             box-shadow: 0 0 15px rgba(52, 152, 219, 0.7);
         }
@@ -76,35 +122,98 @@
         #info-general {
             width: 80px; height: 80px;
             background-color: #3498db;
-            border-radius: 50%;
-            position: absolute; bottom: 20%; left: 20%;
-            z-index: 5; display: none;
+            z-index: 5;
             justify-content: center; align-items: center;
         }
 
+        .objeto-wrapper {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            display: none;
+        }
+
+        .objeto-interactivo {
+            width: 120px;
+            height: 120px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            overflow: hidden;
+            animation: flotar 2s ease-in-out infinite;
+        }
+
+        .icono-personal,
+        .icono-general {
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+        }
+
         .etiqueta {
-            position: absolute; top: -45px;
-            background: white; color: black;
-            padding: 5px 10px; border-radius: 5px;
-            font-weight: bold; font-size: 14px;
-            white-space: nowrap; opacity: 0;
-            transition: opacity 0.3s; pointer-events: none;
-            z-index: 20;
+            font-family: 'Press Start 2P';
+            position: absolute;
+            left: 50%;
+            bottom: 100%;
+            transform: translateX(-58%);
+            margin-bottom: 12px;
+
+            background: white;
+            color: black;
+            padding: 5px 10px;
+            border-radius: 5px;
+            white-space: nowrap;
+            opacity: 0;
+            z-index: 100;
+        }
+        .objeto-interactivo::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+
+            width: 100%;
+            height: 100%;
+
+            background: linear-gradient(
+                120deg,
+                transparent,
+                rgba(255, 255, 255, 0.7),
+                transparent
+            );
+
+            animation: brillo 2.5s infinite;
+        }
+
+        @keyframes brillo {
+            0% {
+                left: -100%;
+            }
+            50% {
+                left: 120%;
+            }
+            100% {
+                left: 120%;
+            }
+        }
+
+        @keyframes flotar {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+            100% {
+                transform: translateY(0);
+            }
         }
 
         .icono-linkd {
            width: 3vw;
            height: 3vw;
-        }
-
-        .icono-personal {
-           width: 4vw;
-           height: 4vw;
-        }
-
-        .icono-general {
-           width: 4vw;
-           height: 4vw;
         }
 
         .cerca .etiqueta { opacity: 1;}
@@ -117,7 +226,7 @@
         <!-- DIÁLOGO 1: Selección de idioma -->
         <div id="pantalla-bienvenida" class="capa-interfaz">
             <div class="cuadro-texto">
-                <h1>Selecciona tu idioma / Select language</h1>
+                <h1 style="font-size: 24px;">Selecciona tu idioma / Select language</h1>
                 <div class="contenedor-imagen">
                     <div class="imagen-clicable" onclick="mostrarInstruc('es')">
                         <img src="images/spain.jpg" alt="Español"/>
@@ -139,9 +248,9 @@
             </div>
         </div>
 
-         <!-- Pantalla de descripción de objetos -->
+         <!-- Pantalla de info personal -->
         <div id="pantalla-detalle" class="capa-interfaz oculto">
-            <div class="cuadro-texto">
+            <div class="cuadro-fijo">
                 <h1 id="detalle-titulo">Información</h1>
                 <p id="detalle-texto">Aquí va tu info personal...</p>
                 <a href="https://www.linkedin.com/in/julia-ballati-martínez-661287347?utm_source=share_via&utm_content=profile&utm_medium=member_android"><img src="images/linkedin.png" alt="LinkeIn" class="icono-linkd"></a>
@@ -150,25 +259,35 @@
             </div>
         </div>
 
-        <!-- Pantalla de descripción de objetos -->
+        <!-- Pantalla de info general -->
         <div id="pantalla-general" class="capa-interfaz oculto">
-            <div class="cuadro-texto">
-                <h1 id="general-titulo">Titulo</h1>
-                <p id="general-texto">Aquí va tu info personal...</p>
-                <p id="general-control" style="color: #f1c40f; font-weight: bold;">Instrucciones de uso</p>
+            <div class="cuadro-fijo">
+                <h1 id="general-titulo">Titulo</h1> <!-- Título sección -->
+                <h3 id="general-estudio1">ESTUDIO 1</h3>
+                <p id="general-estudio1-desc">DESCRIPCIÓN 1</p> 
+                <div class="separador"></div>
+                <h3 id="general-estudio2">ESTUDIO 2</h3>
+                <p id="general-estudio2-desc">DESCRIPCIÓN 2</p> 
+                
+                <p id="general-control" class = "barra-inferior">Instrucciones de uso</p>
             </div>
         </div>
 
         <!-- Objetos del mapa -->
+        <div id="wrapper-personal" class="objeto-wrapper" style="top: 20%; right: 20%;">
+            <div id="etiqueta_pers" class="etiqueta" style="font-size: 10px;">Información Personal (E)</div>
 
-        <div id="info-personal">
-            <img src="images/info.png" class="icono-personal">
-            <div id="etiqueta_pers" class="etiqueta">Información Personal (E)</div>
+            <div id="info-personal" class="objeto-interactivo">
+                <img src="images/info.png" class="icono-personal">
+            </div>
         </div>
 
-        <div id="info-general">
-            <img src="images/manuscrito.png" class="icono-general">
-            <div id="etiqueta_general" class="etiqueta">Información general</div>
+        <div id="wrapper-general" class="objeto-wrapper" style="bottom: 20%; left: 20%;">
+            <div id="etiqueta_general" class="etiqueta" style="font-size: 10px;">Información general</div>
+
+            <div id="info-general" class="objeto-interactivo">
+                <img src="images/manuscrito.png" class="icono-general">
+            </div>
         </div>
         
         <div id="sprite"></div>
@@ -178,10 +297,8 @@
         const bienvenida = document.getElementById('pantalla-bienvenida');
         const info = document.getElementById('pantalla-info');
         const detalle = document.getElementById('pantalla-detalle');
-        const genreal = document.getElementById('pantalla-general');
+        const general = document.getElementById('pantalla-general');
         const sprite = document.getElementById('sprite');
-        const info_pers = document.getElementById('info-personal');
-        const info_general = document.getElementById('info-general');
         const escenario = document.getElementById('escenario');
 
         let estadoActual = 'bienvenida'; 
@@ -198,9 +315,12 @@
         let contadorFrames = 0;
 
         // poner aqui los bjetos interactivos
+        const wrapper_pers = document.getElementById('wrapper-personal');
+        const wrapper_general = document.getElementById('wrapper-general');
+
         const objetosInteractivos = [
-            { elemento: info_pers, accion: mostrarInfo },
-            { elemento: info_general, accion: mostrarInfoGeneral }
+            { elemento: wrapper_pers, accion: mostrarInfo },
+            { elemento: wrapper_general, accion: mostrarInfoGeneral }
         ];
         let objetoCercano = null;
 
@@ -249,19 +369,30 @@
 
         function mostrarInfoGeneral() {
             estadoActual = 'leyendo';
-            genreal.classList.remove('oculto');
+            general.classList.remove('oculto');
             
             // Actualizar el texto del detalle según el idioma
             const dTitulo = document.getElementById('general-titulo');
-            const dTexto = document.getElementById('general-texto');
+            const estudio1 = document.getElementById('general-estudio1');
+            const estudio1_desc = document.getElementById('general-estudio1-desc');
+            const estudio2 = document.getElementById('general-estudio2');
+            const estudio2_desc = document.getElementById('general-estudio2-desc');
             const dControl = document.getElementById('general-control');
+
+
             if(lenguaje === 'es') {
-                dTitulo.innerText = "Estudios";
-                dTexto.innerHTML = "<b>Grado Bilingüe en Ingeniería Informática</b> <br> Universidad de Castilla La-Mancha <br> <b>Máster Universitario en Inteligencia Artificial </b> <br> Universidad de Castilla La-Mancha";
+                dTitulo.innerText = "Educación";
+                estudio1.innerHTML = "<b>Grado Bilingüe en Ingeniería Informática</b>";
+                estudio1_desc.innerHTML = "Universidad de Castilla La-Mancha ";
+                estudio2.innerHTML = "<b>Máster Universitario en Ingeniería Informática</b>";
+                estudio2_desc.innerHTML = "Universidad de Castilla La-Mancha ";
                 dControl.innerText = "Presiona [ E ] para cerrar";
             } else {
-                dTitulo.innerText = "Studies";
-                dTexto.innerHTML = "<b>Bilingual Bachelor's Degree in Computer Engineering</b> <br> University of Castilla–La Mancha <br> <b>University Master’s Degree in Artificial Intelligence </b> <br> University of Castilla–La Mancha";
+                dTitulo.innerText = "Education";
+                estudio1.innerHTML = "<b>Bilingual Bachelor's Degree in Computer Engineering</b>";
+                estudio1_desc.innerHTML = "University of Castilla–La Mancha";
+                estudio2.innerHTML = "<b>University Master’s Degree in Artificial Intelligence</b>";
+                estudio2_desc.innerHTML = "University of Castilla–La Mancha";
                 dControl.innerText = "Press [ E ] to close";
             }
         }
@@ -269,6 +400,7 @@
         function cerrarInfo() {
             estadoActual = 'juego';
             detalle.classList.add('oculto');
+            general.classList.add('oculto');
         }
 
         window.addEventListener('keydown', (e) => {
@@ -287,8 +419,8 @@
             estadoActual = 'juego';
             info.classList.add('oculto');
             sprite.style.display = 'block';
-            info_pers.style.display = 'flex';
-            info_general.style.display = 'flex';
+            wrapper_pers.style.display = 'block';
+            wrapper_general.style.display = 'block';
             const etiqueta_pers = document.getElementById('etiqueta_pers');
             const etiqueta_general = document.getElementById('etiqueta_general');
 
