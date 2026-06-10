@@ -166,7 +166,7 @@
             border-radius: 5px;
             white-space: nowrap;
             opacity: 0;
-            z-index: 100;
+            z-index: 99;
         }
         .objeto-interactivo::after {
             content: "";
@@ -300,8 +300,16 @@
         const general = document.getElementById('pantalla-general');
         const sprite = document.getElementById('sprite');
         const escenario = document.getElementById('escenario');
+        const etiqueta_pers = document.getElementById('etiqueta_pers');
+        const etiqueta_general = document.getElementById('etiqueta_general');
 
-        let estadoActual = 'bienvenida'; 
+        // bienv -> 0
+        // present -> 1
+        // instruc -> 2
+        // leyendo -> 3
+        // juego -> 4
+        const estadosPosibles = ['bienvenida', 'presentacion', 'instruc', 'leyendo', 'juego']
+        let estadoActual = estadosPosibles[0]; 
         let posX, posY;
         const velocidad = 5;
         const teclas = {};
@@ -328,7 +336,7 @@
         const velocidadAnimacion = 5;
 
         function mostrarInstruc(idioma) {
-            estadoActual = 'info';
+            estadoActual = estadosPosibles[2];
             lenguaje = idioma;
             bienvenida.classList.add('oculto');
             info.classList.remove('oculto');
@@ -349,7 +357,7 @@
         }
 
         function mostrarInfo() {
-            estadoActual = 'leyendo';
+            estadoActual = estadosPosibles[3];
             detalle.classList.remove('oculto');
             
             // Actualizar el texto del detalle según el idioma
@@ -368,7 +376,7 @@
         }
 
         function mostrarInfoGeneral() {
-            estadoActual = 'leyendo';
+            estadoActual = estadosPosibles[3];
             general.classList.remove('oculto');
             
             // Actualizar el texto del detalle según el idioma
@@ -398,7 +406,7 @@
         }
 
         function cerrarInfo() {
-            estadoActual = 'juego';
+            estadoActual = estadosPosibles[4];
             detalle.classList.add('oculto');
             general.classList.add('oculto');
         }
@@ -406,9 +414,9 @@
         window.addEventListener('keydown', (e) => {
             const key = e.key.toLowerCase();
             if (key === 'e') {
-                if (estadoActual === 'info') iniciarJuego();
-                else if (estadoActual === 'juego' && objetoCercano) objetoCercano.accion();
-                else if (estadoActual === 'leyendo') cerrarInfo(); // Cerrar también con E
+                if (estadoActual === estadosPosibles[2]) iniciarJuego();
+                else if (estadoActual === estadosPosibles[4] && objetoCercano) objetoCercano.accion();
+                else if (estadoActual === estadosPosibles[3]) cerrarInfo(); // Cerrar también con E
             }
             teclas[key] = true;
         });
@@ -416,13 +424,11 @@
         window.addEventListener('keyup', (e) => teclas[e.key.toLowerCase()] = false);
 
         function iniciarJuego() {
-            estadoActual = 'juego';
+            estadoActual = estadosPosibles[4];
             info.classList.add('oculto');
             sprite.style.display = 'block';
             wrapper_pers.style.display = 'block';
             wrapper_general.style.display = 'block';
-            const etiqueta_pers = document.getElementById('etiqueta_pers');
-            const etiqueta_general = document.getElementById('etiqueta_general');
 
             if (lenguaje === 'es'){
                 etiqueta_pers.innerText = "Información personal [ E ]"
@@ -469,7 +475,7 @@
 
         // BUCLE DE ANIMACIÓN
         function bucle() {
-            if (estadoActual !== 'juego') {
+            if (estadoActual !== estadosPosibles[4]) {
                 requestAnimationFrame(bucle);
                 return;
             }
