@@ -20,6 +20,13 @@
             overflow: hidden;
         }
 
+        .centrar {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
         .capa-interfaz {
             position: absolute; top: 0; left: 0;
             width: 100%; height: 100%;
@@ -44,12 +51,10 @@
                 inset 0 0 15px rgba(52,152,219,.15);
 
             position: relative;
-
             padding: 30px;
             color: white;
             text-align: center;
             border-radius: 15px;
-
             width: 50vw;
             height: 40vh;
         }
@@ -128,14 +133,14 @@
 
         .objeto-wrapper {
             position: absolute;
-            width: 120px;
-            height: 120px;
+            width: 90px;
+            height: 90px;
             display: none;
         }
 
         .objeto-interactivo {
-            width: 120px;
-            height: 120px;
+            width: 90px;
+            height: 90px;
 
             display: flex;
             justify-content: center;
@@ -218,6 +223,38 @@
 
         .cerca .etiqueta { opacity: 1;}
         .oculto { display: none !important; }
+
+        .bocadillo {
+            position: absolute;
+            background: white;
+            color: black;
+            padding: 12px 16px 25px 16px;
+            border-radius: 15px;
+            font-family: 'Press Start 2P';
+            font-size: 10px;
+            max-width: 320px;
+            z-index: 30;
+
+            position: absolute;
+        }
+
+        .bocadillo::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 35px;
+            border-width: 10px 10px 0 10px;
+            border-style: solid;
+            border-color: white transparent transparent transparent;
+        }
+
+        .indicador-dialogo {
+            position: absolute;
+            bottom: 5px;
+            right: 10px;
+            font-size: 8px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -252,10 +289,13 @@
         <div id="pantalla-detalle" class="capa-interfaz oculto">
             <div class="cuadro-fijo">
                 <h1 id="detalle-titulo">Información</h1>
-                <p id="detalle-texto">Aquí va tu info personal...</p>
-                <a href="https://www.linkedin.com/in/julia-ballati-martínez-661287347?utm_source=share_via&utm_content=profile&utm_medium=member_android"><img src="images/linkedin.png" alt="LinkeIn" class="icono-linkd"></a>
-                <a href="https://github.com/Ailuj27"><img src="images/github.png" alt="GitHub" class="icono-linkd"></a>
-                <p id="detalle-control" style="color: #f1c40f; font-weight: bold;">Instrucciones de uso</p>
+                <div class="centrar">
+                    <p id="detalle-texto">Aquí va tu info personal...</p>
+                    <div class="separador"></div>
+                    <a href="https://www.linkedin.com/in/julia-ballati-martínez-661287347?utm_source=share_via&utm_content=profile&utm_medium=member_android"><img src="images/linkedin.png" alt="LinkeIn" class="icono-linkd"></a>
+                    <a href="https://github.com/Ailuj27"><img src="images/github.png" alt="GitHub" class="icono-linkd"></a>
+                </div>
+                <p id="detalle-control" class = "barra-inferior">Instrucciones de uso</p>
             </div>
         </div>
 
@@ -263,12 +303,13 @@
         <div id="pantalla-general" class="capa-interfaz oculto">
             <div class="cuadro-fijo">
                 <h1 id="general-titulo">Titulo</h1> <!-- Título sección -->
-                <h3 id="general-estudio1">ESTUDIO 1</h3>
-                <p id="general-estudio1-desc">DESCRIPCIÓN 1</p> 
-                <div class="separador"></div>
-                <h3 id="general-estudio2">ESTUDIO 2</h3>
-                <p id="general-estudio2-desc">DESCRIPCIÓN 2</p> 
-                
+                <div class="centrar">
+                    <h3 id="general-estudio1">ESTUDIO 1</h3>
+                    <p id="general-estudio1-desc">DESCRIPCIÓN 1</p> 
+                    <div class="separador"></div>
+                    <h3 id="general-estudio2">ESTUDIO 2</h3>
+                    <p id="general-estudio2-desc">DESCRIPCIÓN 2</p> 
+                </div>
                 <p id="general-control" class = "barra-inferior">Instrucciones de uso</p>
             </div>
         </div>
@@ -276,7 +317,6 @@
         <!-- Objetos del mapa -->
         <div id="wrapper-personal" class="objeto-wrapper" style="top: 20%; right: 20%;">
             <div id="etiqueta_pers" class="etiqueta" style="font-size: 10px;">Información Personal (E)</div>
-
             <div id="info-personal" class="objeto-interactivo">
                 <img src="images/info.png" class="icono-personal">
             </div>
@@ -284,10 +324,15 @@
 
         <div id="wrapper-general" class="objeto-wrapper" style="bottom: 20%; left: 20%;">
             <div id="etiqueta_general" class="etiqueta" style="font-size: 10px;">Información general</div>
-
             <div id="info-general" class="objeto-interactivo">
                 <img src="images/manuscrito.png" class="icono-general">
             </div>
+        </div>
+
+        <!-- Bocadillo personaje -->
+        <div id="bocadillo-personaje" class="bocadillo oculto">
+            <div id="texto-dialogo"></div>
+            <div class="indicador-dialogo">[E]</div>
         </div>
         
         <div id="sprite"></div>
@@ -335,6 +380,11 @@
         const totalFrames = 9;
         const velocidadAnimacion = 5;
 
+        // Variables de diálogo
+        let dialogoActivo = false;
+        let indiceDialogo = 0;
+        let frasesDialogo = [];
+
         function mostrarInstruc(idioma) {
             estadoActual = estadosPosibles[2];
             lenguaje = idioma;
@@ -366,11 +416,11 @@
             const dControl = document.getElementById('detalle-control');
             if(lenguaje === 'es') {
                 dTitulo.innerText = "Datos de Contacto";
-                dTexto.innerHTML = "<b>Email:</b> juliabm2710@gmail.com <br><b>Tlf:</b> +34 601 40 92 74";
+                dTexto.innerHTML = "<b>Email:</b> juliabm2710@gmail.com <br><br> <b>Tlf:</b> +34 601 40 92 74";
                 dControl.innerText = "Presiona [ E ] para cerrar";
             } else {
                 dTitulo.innerText = "Contact Details";
-                dTexto.innerHTML = "<b>Email:</b> juliabm2710@gmail.com <br><b>Tel:</b> +34 601 40 92 74";
+                dTexto.innerHTML = "<br><br><br><br> <b>Email:</b> juliabm2710@gmail.com <br><br> <b>Tel:</b> +34 601 40 92 74";
                 dControl.innerText = "Press [ E ] to close";
             }
         }
@@ -391,9 +441,9 @@
             if(lenguaje === 'es') {
                 dTitulo.innerText = "Educación";
                 estudio1.innerHTML = "<b>Grado Bilingüe en Ingeniería Informática</b>";
-                estudio1_desc.innerHTML = "Universidad de Castilla La-Mancha ";
+                estudio1_desc.innerHTML = "<br>Universidad de Castilla La-Mancha";
                 estudio2.innerHTML = "<b>Máster Universitario en Ingeniería Informática</b>";
-                estudio2_desc.innerHTML = "Universidad de Castilla La-Mancha ";
+                estudio2_desc.innerHTML = "<br>Universidad de Castilla La-Mancha";
                 dControl.innerText = "Presiona [ E ] para cerrar";
             } else {
                 dTitulo.innerText = "Education";
@@ -414,6 +464,10 @@
         window.addEventListener('keydown', (e) => {
             const key = e.key.toLowerCase();
             if (key === 'e') {
+                 if (dialogoActivo) {
+                    avanzarDialogo();
+                    return;
+                }
                 if (estadoActual === estadosPosibles[2]) iniciarJuego();
                 else if (estadoActual === estadosPosibles[4] && objetoCercano) objetoCercano.accion();
                 else if (estadoActual === estadosPosibles[3]) cerrarInfo(); // Cerrar también con E
@@ -438,10 +492,10 @@
                 etiqueta_general.innerText = "General Information [ E ]"
             }
 
-            
             posX = (escenario.clientWidth / 2) - 25;
             posY = (escenario.clientHeight / 2) - 25;
-            
+
+            iniciarDialogoInicial();
             bucle();
         }
 
@@ -473,6 +527,49 @@
             });
         }
 
+        function iniciarDialogoInicial() {
+            dialogoActivo = true;
+            indiceDialogo = 0;
+
+            frasesDialogo = lenguaje === "es"
+                ? [
+                    "¡Hola! Soy Julia.",
+                    "Bienvenido a mi CV interactivo.",
+                    "Explora el entorno para descubrir más sobre mi.",
+                    "¡Disfruta explorando!"
+                ]
+                : [
+                    "Hi! I'm Julia.",
+                    "Welcome to my interactive CV.",
+                    "Explore the environment to discover more about me",
+                    "Enjoy exploring!"
+                ];
+
+            const bocadillo = document.getElementById("bocadillo-personaje");
+            document.getElementById("texto-dialogo").innerText = frasesDialogo[0];
+            bocadillo.classList.remove("oculto");
+        }
+
+        function avanzarDialogo() {
+            indiceDialogo++;
+            const bocadillo = document.getElementById("bocadillo-personaje");
+            if (indiceDialogo >= frasesDialogo.length) {
+                dialogoActivo = false;
+                bocadillo.classList.add("oculto");
+                return;
+            }
+            document.getElementById("texto-dialogo").innerText = frasesDialogo[indiceDialogo];
+        }
+        function actualizarBocadillo() {
+            const bocadillo = document.getElementById("bocadillo-personaje");
+
+            if (!dialogoActivo) return;
+
+            bocadillo.style.left = (posX + sprite.offsetWidth / 2) + "px";
+            bocadillo.style.top = (posY - 20) + "px";
+            bocadillo.style.transform = "translate(-50%, -100%)";
+        }
+
         // BUCLE DE ANIMACIÓN
         function bucle() {
             if (estadoActual !== estadosPosibles[4]) {
@@ -489,70 +586,73 @@
             Fila 1 → izquierda
             Fila 2 → derecha
             Fila 3 → arriba*/
-
-            // Movimiento + dirección
-            if ((teclas['arrowup'] || teclas['w']) && posY > 0) {
-                proximaY -= velocidad;
-                frameY = 8; // arriba
-                moviendo = true;
-            }
-            if ((teclas['arrowdown'] || teclas['s']) && posY < escenario.clientHeight - sprite.offsetHeight) {
-                proximaY += velocidad;
-                frameY = 10; // abajo
-                moviendo = true;
-            }
-            if ((teclas['arrowleft'] || teclas['a']) && posX > 0) {
-                proximaX -= velocidad;
-                frameY = 9; // izquierda
-                moviendo = true;
-            }
-            if ((teclas['arrowright'] || teclas['d']) && posX < escenario.clientWidth - sprite.offsetWidth) {
-                proximaX += velocidad;
-                frameY = 11; // derecha
-                moviendo = true;
-            }
-
-            // Animación
-            if (moviendo) {
-                contadorFrames++;
-                if (contadorFrames % velocidadAnimacion === 0) {
-                    frameX = (frameX + 1) % totalFrames;
-                }
+            if (dialogoActivo) {
+                moviendo = false;
+                frameX = 0;
             } else {
-                frameX = 0; // idle
+                // Movimiento + dirección
+                if ((teclas['arrowup'] || teclas['w']) && posY > 0) {
+                    proximaY -= velocidad;
+                    frameY = 8; // arriba
+                    moviendo = true;
+                }
+                if ((teclas['arrowdown'] || teclas['s']) && posY < escenario.clientHeight - sprite.offsetHeight) {
+                    proximaY += velocidad;
+                    frameY = 10; // abajo
+                    moviendo = true;
+                }
+                if ((teclas['arrowleft'] || teclas['a']) && posX > 0) {
+                    proximaX -= velocidad;
+                    frameY = 9; // izquierda
+                    moviendo = true;
+                }
+                if ((teclas['arrowright'] || teclas['d']) && posX < escenario.clientWidth - sprite.offsetWidth) {
+                    proximaX += velocidad;
+                    frameY = 11; // derecha
+                    moviendo = true;
+                }
             }
 
-            // Colisiones por eje para deslizamiento
-            if (!verificarColision(proximaX, posY)) posX = proximaX;
-            if (!verificarColision(posX, proximaY)) posY = proximaY;
-
-            sprite.style.left = posX + 'px';
-            sprite.style.top = posY + 'px';
-            sprite.style.backgroundPosition =`-${frameX * sprite.offsetWidth}px -${frameY * sprite.offsetHeight}px`;
-
-            // Proximidad (usando centros reales)
-            objetoCercano = null;
-
-            objetosInteractivos.forEach(obj => {
-                const elemento = obj.elemento;
-
-                const spriteCX = posX + sprite.offsetWidth / 2;
-                const spriteCY = posY + sprite.offsetHeight / 2;
-
-                const objetoCX = elemento.offsetLeft + elemento.offsetWidth / 2;
-                const objetoCY = elemento.offsetTop + elemento.offsetHeight / 2;
-
-                const dist = Math.hypot(spriteCX - objetoCX, spriteCY - objetoCY);
-
-                if (dist < radioDeteccion) {
-                    elemento.classList.add('cerca');
-                    objetoCercano = obj;
+                // Animación
+                if (moviendo) {
+                    contadorFrames++;
+                    if (contadorFrames % velocidadAnimacion === 0) {
+                        frameX = (frameX + 1) % totalFrames;
+                    }
+                } else if (dialogoActivo && indiceDialogo == 0){
+                    frameX = 0
                 } else {
-                    elemento.classList.remove('cerca');
+                    frameX = 0; // idle
                 }
-            });
 
-            estaCerca = objetoCercano !== null;
+                // Colisiones por eje para deslizamiento
+                if (!verificarColision(proximaX, posY)) posX = proximaX;
+                if (!verificarColision(posX, proximaY)) posY = proximaY;
+
+                sprite.style.left = posX + 'px';
+                sprite.style.top = posY + 'px';
+                sprite.style.backgroundPosition =`-${frameX * sprite.offsetWidth}px -${frameY * sprite.offsetHeight}px`;
+                actualizarBocadillo(); // para actualizar dónde está el bocadillo
+
+                // Proximidad (usando centros reales)
+                objetoCercano = null;
+
+                objetosInteractivos.forEach(obj => {
+                    const elemento = obj.elemento;
+                    const spriteCX = posX + sprite.offsetWidth / 2;
+                    const spriteCY = posY + sprite.offsetHeight / 2;
+                    const objetoCX = elemento.offsetLeft + elemento.offsetWidth / 2;
+                    const objetoCY = elemento.offsetTop + elemento.offsetHeight / 2;
+                    const dist = Math.hypot(spriteCX - objetoCX, spriteCY - objetoCY);
+
+                    if (dist < radioDeteccion) {
+                        elemento.classList.add('cerca');
+                        objetoCercano = obj;
+                    } else {
+                        elemento.classList.remove('cerca');
+                    }
+                });
+                estaCerca = objetoCercano !== null;
 
             requestAnimationFrame(bucle);
         }
