@@ -258,8 +258,8 @@
     </style>
 </head>
 <body>
-
     <div id="escenario">
+
         <!-- DIÁLOGO 1: Selección de idioma -->
         <div id="pantalla-bienvenida" class="capa-interfaz">
             <div class="cuadro-texto">
@@ -339,6 +339,14 @@
     </div>
 
     <script>
+
+        const esMovil =window.innerWidth <= 768 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        if (esMovil) {
+            console.log("Modo móvil");
+        } else {
+            console.log("Modo PC");
+        }
+
         const bienvenida = document.getElementById('pantalla-bienvenida');
         const info = document.getElementById('pantalla-info');
         const detalle = document.getElementById('pantalla-detalle');
