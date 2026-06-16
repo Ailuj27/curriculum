@@ -353,7 +353,19 @@
 
         const esMovil =window.innerWidth <= 768 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
         if (esMovil) {
-            bienvenida.add("oculto");
+            document.querySelector('.cuadro-texto').innerHTML = `
+                <h1 style="font-size:24px;">📱 Mobile Version</h1>
+                <p style="font-size:18px;">
+                    Este CV interactivo ha sido diseñado para ordenador.
+                    <br><br>
+                    Por favor, accede desde un PC para disfrutar de la experiencia completa.
+                    <br><br><br>
+                    This interactive CV has been designed for desktop computers.
+                    <br><br>
+                    Please visit this website from a PC to enjoy the full experience.
+                </p>
+            `;
+            document.querySelector('.contenedor-imagen').style.display = 'none';
         } else {
             console.log("Modo PC");
         }
