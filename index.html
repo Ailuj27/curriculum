@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title>Welcome to my CV!</title>
     <style>
@@ -339,9 +340,6 @@
     </div>
 
     <script>
-
-        
-
         const bienvenida = document.getElementById('pantalla-bienvenida');
         const info = document.getElementById('pantalla-info');
         const detalle = document.getElementById('pantalla-detalle');
@@ -351,7 +349,11 @@
         const etiqueta_pers = document.getElementById('etiqueta_pers');
         const etiqueta_general = document.getElementById('etiqueta_general');
 
-        const esMovil =window.innerWidth <= 768 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        const esMovil = window.matchMedia("(max-width: 768px)").matches ||window.matchMedia("(pointer: coarse)").matches ||/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+        console.log("esMovil:", esMovil);
+        console.log("ancho:", window.innerWidth);
+        console.log("userAgent:", navigator.userAgent);
+
         if (esMovil) {
             document.querySelector('.cuadro-texto').innerHTML = `
                 <h1 style="font-size:24px;">📱 Mobile Version</h1>
@@ -365,7 +367,6 @@
                     Please visit this website from a PC to enjoy the full experience.
                 </p>
             `;
-            document.querySelector('.contenedor-imagen').style.display = 'none';
         } else {
             console.log("Modo PC");
         }
