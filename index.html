@@ -82,7 +82,7 @@
 
             text-align: center;
             color: #f1c40f;
-            font-size: 1.3rem;
+            font-size: 1rem;
         }
 
         .contenedor-imagen {
@@ -340,12 +340,7 @@
 
     <script>
 
-        const esMovil =window.innerWidth <= 768 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-        if (esMovil) {
-            console.log("Modo móvil");
-        } else {
-            console.log("Modo PC");
-        }
+        
 
         const bienvenida = document.getElementById('pantalla-bienvenida');
         const info = document.getElementById('pantalla-info');
@@ -355,6 +350,13 @@
         const escenario = document.getElementById('escenario');
         const etiqueta_pers = document.getElementById('etiqueta_pers');
         const etiqueta_general = document.getElementById('etiqueta_general');
+
+        const esMovil =window.innerWidth <= 768 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        if (esMovil) {
+            bienvenida.add("oculto")
+        } else {
+            console.log("Modo PC");
+        }
 
         // bienv -> 0
         // present -> 1
